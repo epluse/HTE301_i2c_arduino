@@ -47,18 +47,18 @@ hte301I2c::hte301I2c(unsigned char i2cAdress)
 
 uint8_t hte301I2c::singleShotTempHum(float &temperature, float &humidity, int repeatability) // repeatability: 0 = low, 1 = medium, 2 = high;
 {
-  unsigned char i2cResponse[6];
-  unsigned char Command[] = {0x2C, 0x00};
+  unsigned char i2cResponse[6] = {};
+  unsigned char Command[2] = {(HTE301_COMMAND_READ_SINGLE_SHOT_HIGH_EN >> 8)};
   switch (repeatability)
   {
   case 0:
-    Command[1] = {0x10};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_LOW_EN & 0xFF)};
     break;
   case 1:
-    Command[1] = {0x0D};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_MEDIUM_EN & 0xFF)};
     break;
   case 2:
-    Command[1] = {0x06};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_HIGH_EN & 0xFF)};
     break;
   }
   wireWrite(Command, 1, false);
@@ -78,18 +78,18 @@ uint8_t hte301I2c::singleShotTempHum(float &temperature, float &humidity, int re
 
 uint8_t hte301I2c::singleShotTempHumClockStretchingDisabled(float &temperature, float &humidity, int repeatability) // repeatability: 0 = low, 1 = medium, 2 = high;
 {
-  unsigned char i2cResponse[6];
-  unsigned char Command[] = {0x24, 0x00};
+  unsigned char i2cResponse[6] = {};
+  unsigned char Command[2] = {(HTE301_COMMAND_READ_SINGLE_SHOT_HIGH_DIS >> 8)};
   switch (repeatability)
   {
   case 0:
-    Command[1] = {0x16};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_LOW_DIS & 0xFF)};
     break;
   case 1:
-    Command[1] = {0x0B};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_MEDIUM_DIS & 0xFF)};
     break;
   case 2:
-    Command[1] = {0x00};
+    Command[1] = {(HTE301_COMMAND_READ_SINGLE_SHOT_HIGH_DIS & 0xFF)};
     break;
   }
   wireWrite(Command, 1, false);
@@ -110,8 +110,8 @@ uint8_t hte301I2c::singleShotTempHumClockStretchingDisabled(float &temperature, 
 
 uint8_t hte301I2c::getPeriodicMeasurementTempHum(float &temperature, float &humidity)
 {
-  unsigned char i2cResponse[6];
-  unsigned char Command[] = {0xE0, 0x00};
+  unsigned char i2cResponse[6] = {};
+  unsigned char Command[] = {(HTE301_COMMAND_READ_PERIODIC_MEASUREMENT >> 8), (HTE301_COMMAND_READ_PERIODIC_MEASUREMENT & 0xFF)};
   wireWrite(Command, 1, false);
   wireRead(i2cResponse, 6);
   if (i2cResponse[2] == calcCrc8(i2cResponse, 0, 1) && i2cResponse[5] == calcCrc8(i2cResponse, 3, 4))
@@ -129,82 +129,82 @@ uint8_t hte301I2c::getPeriodicMeasurementTempHum(float &temperature, float &humi
 
 void hte301I2c::startPeriodicMeasurement(int measurementPerSeconds , int repeatability) // measurementPerSeconds: 0 = 0.5 mps, 1 = 1mps, 2 = 2mps, 3 = 4mps, 4 = 10mps;  repeatability: 0 = low, 1 = medium, 2 = high; 
 {
-  unsigned char i2cResponse[6];
-  unsigned char Command[] = {0x00, 0x00};
+  unsigned char i2cResponse[6] = {};
+  unsigned char Command[2];
   switch (measurementPerSeconds)
   {
   case 0:
-    Command[0] = {0x20};
+    Command[0] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_0_5_HIGH >> 8)};
     switch (repeatability)
     {
       case 0:
-        Command[1] = {0x2F};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_0_5_LOW & 0xFF)};
         break;
       case 1:
-        Command[1] = {0x24};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_0_5_MEDIUM & 0xFF)};
         break;
       case 2:
-        Command[1] = {0x32};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_0_5_HIGH & 0xFF)};
         break;
     }
     break;
   case 1:
-    Command[0] = {0x21};
+    Command[0] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_1_HIGH >> 8)};
     switch (repeatability)
     {
       case 0:
-        Command[1] = {0x2D};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_1_LOW & 0xFF)};
         break;
       case 1:
-        Command[1] = {0x26};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_1_MEDIUM & 0xFF)};
         break;
       case 2:
-        Command[1] = {0x30};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_1_HIGH & 0xFF)};
         break;
     }
     break;
   case 2:
-    Command[0] = {0x22};
+    Command[0] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_2_HIGH >> 8)};
     switch (repeatability)
     {
       case 0:
-        Command[1] = {0x2B};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_2_LOW & 0xFF)};
         break;
       case 1:
-        Command[1] = {0x20};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_2_MEDIUM & 0xFF)};
         break;
       case 2:
-        Command[1] = {0x36};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_2_HIGH & 0xFF)};
         break;
     }
     break;
   case 3:
-    Command[0] = {0x23};
+    Command[0] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_4_HIGH >> 8)};
     switch (repeatability)
     {
       case 0:
-        Command[1] = {0x29};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_4_LOW & 0xFF)};
         break;
       case 1:
-        Command[1] = {0x22};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_4_MEDIUM & 0xFF)};
         break;
       case 2:
-        Command[1] = {0x34};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_4_HIGH & 0xFF)};
         break;
     }
     break;
   case 4:
-    Command[0] = {0x27};
+    Command[0] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_10_HIGH >> 8)};
     switch (repeatability)
     {
       case 0:
-        Command[1] = {0x2A};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_10_LOW & 0xFF)};
         break;
       case 1:
-        Command[1] = {0x21};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_10_MEDIUM & 0xFF)};
         break;
       case 2:
-        Command[1] = {0x37};
+        Command[1] = {(HTE301_COMMAND_START_PERIODIC_MEASUREMENT_10_HIGH & 0xFF)};
         break;
     }
     break;
@@ -214,26 +214,26 @@ void hte301I2c::startPeriodicMeasurement(int measurementPerSeconds , int repeata
 
 void hte301I2c::endPeriodicMeasurement(void)
 {
-  unsigned char Command[] = {0x30, 0x93};
+  unsigned char Command[] = {(HTE301_COMMAND_END_PERIODIC_MEASUREMENT >> 8), (HTE301_COMMAND_END_PERIODIC_MEASUREMENT & 0xFF)};
   wireWrite(Command, 1, true);
 }
 
 void hte301I2c::heaterOn(void)
 {
-  unsigned char Command[] = {0x30, 0x6D};
+  unsigned char Command[] = {(HTE301_COMMAND_HEATER_ON >> 8), (HTE301_COMMAND_HEATER_ON & 0xFF)};
   wireWrite(Command, 1, true);
 }
 
 void hte301I2c::heaterOff(void)
 {
-  unsigned char Command[] = {0x30, 0x66};
+  unsigned char Command[] = {(HTE301_COMMAND_HEATER_OFF >> 8), (HTE301_COMMAND_HEATER_OFF & 0xFF)};
   wireWrite(Command, 1, true);
 }
 
 uint8_t hte301I2c::readIdentification(unsigned char identification[])
 {
-  unsigned char i2cResponse[9];
-  unsigned char Command[] = {0x70, 0x29};
+  unsigned char i2cResponse[9] = {};
+  unsigned char Command[] = {(HTE301_COMMAND_READ_IDENTIFICATION >> 8), (HTE301_COMMAND_READ_IDENTIFICATION & 0xFF)};
   wireWrite(Command, 1, false);
   wireRead(i2cResponse, 9);
   if (i2cResponse[8] == calcCrc8(i2cResponse, 0, 7))
@@ -251,38 +251,17 @@ uint8_t hte301I2c::readIdentification(unsigned char identification[])
 }
 
 
-uint8_t hte301I2c::readStatusRegister1(unsigned char statusRegister1[])
+uint8_t hte301I2c::readStatusRegister(unsigned char statusRegister[])
 {
-  unsigned char i2cResponse[3];
-  unsigned char Command[] = {0xF3, 0x2D};
+  unsigned char i2cResponse[3] = {};
+  unsigned char Command[] = {(HTE301_COMMAND_READ_REGISTER >> 8), (HTE301_COMMAND_READ_REGISTER & 0xFF)};
   wireWrite(Command, 1, false);
   wireRead(i2cResponse, 3);
   if (i2cResponse[2] == calcCrc8(i2cResponse, 0, 1))
   {
     for (int i = 0; i < 2; i++)
     {
-      statusRegister1[i] = i2cResponse[i];
-    }
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
-}
-
-
-uint8_t hte301I2c::readStatusRegister2(unsigned char statusRegister2[])
-{
-  unsigned char i2cResponse[3];
-  unsigned char Command[] = {0xF3, 0x2D};
-  wireWrite(Command, 1, false);
-  wireRead(i2cResponse, 3);
-  if (i2cResponse[2] == calcCrc8(i2cResponse, 0, 1))
-  {
-    for (int i = 0; i < 2; i++)
-    {
-      statusRegister2[i] = i2cResponse[i];
+      statusRegister[i] = i2cResponse[i];
     }
     return 0;
   }
@@ -295,15 +274,15 @@ uint8_t hte301I2c::readStatusRegister2(unsigned char statusRegister2[])
 
 void hte301I2c::reset(void)
 {
-  unsigned char Command[] = {0x30, 0xA2};
+  unsigned char Command[] = {(HTE301_COMMAND_SOFT_RESET >> 8),(HTE301_COMMAND_SOFT_RESET & 0xFF)};
   wireWrite(Command, 1, true);
 }
 
 
 uint8_t hte301I2c::constantHeaterOnOff(bool &conHeaterOnOff)
 {
-  unsigned char i2cResponse[3];
-  unsigned char Command[] = {0xF3, 0x2D};
+  unsigned char i2cResponse[3] = {};
+  unsigned char Command[] = {(HTE301_COMMAND_READ_REGISTER >> 8), (HTE301_COMMAND_READ_REGISTER & 0xFF)};
   wireWrite(Command, 1, false);
   wireRead(i2cResponse, 3);
   if (i2cResponse[2] == calcCrc8(i2cResponse, 0, 1))
@@ -318,9 +297,9 @@ uint8_t hte301I2c::constantHeaterOnOff(bool &conHeaterOnOff)
   }
 }
 
-void hte301I2c::clearStatusregister1(void)
+void hte301I2c::clearStatusregister(void)
 {
-  unsigned char Command[] = {0x30, 0x41};
+  unsigned char Command[] = {(HTE301_COMMAND_CLEAR_REGISTER >> 8), (HTE301_COMMAND_CLEAR_REGISTER & 0xFF)};
   wireWrite(Command, 1, true);
 }
 
